@@ -26,7 +26,7 @@ class OrderController extends Controller
             ]
         );
 
-        foreach ($goods_infos as $goods_info) {
+        foreach (json_decode($goods_infos) as $goods_info) {
             $good_id = $goods_info->goodsId;
             $quantity = $goods_info->number;
 
@@ -45,5 +45,10 @@ class OrderController extends Controller
         Order::where('id', $order_id)->update([
             'amount' => $amount
         ]);
+
+        return [
+            'code' => 0,
+            'msg' => '请等待工作人员与您联系'
+        ];
     }
 }

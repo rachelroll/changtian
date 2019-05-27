@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['namespace' => 'Api'], function () {
     // 商品详情
-    Route::get('/pages/goods-details/index', 'GoodsController@show');
+    Route::get('/shop/goods/detail', 'GoodsController@show');
     // 商品列表
     Route::post('/shop/goods/list', 'GoodsController@index');
 
@@ -31,7 +31,6 @@ Route::group(['namespace' => 'Api'], function () {
 
     // 轮播图
     Route::get('/banner/list', 'BannerController@index');
-
     // 用户相关
     Route::post('/user/wxapp/login', 'UserController@login');
 });
