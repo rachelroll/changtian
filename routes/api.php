@@ -18,20 +18,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['namespace' => 'Api'], function () {
-    // ÉÌÆ·ÏêÇé
+    // å•†å“è¯¦æƒ…
     Route::get('/shop/goods/detail', 'GoodsController@show');
-    // ÉÌÆ·ÁĞ±í
+    // å•†å“åˆ—è¡¨
     Route::post('/shop/goods/list', 'GoodsController@index');
 
-    // ËùÓĞ·ÖÀà
+    // æ‰€æœ‰åˆ†ç±»
     Route::get('/shop/goods/category/all', 'CategoryController@index');
 
-    // Éú³É¶©µ¥
+    // ç”Ÿæˆè®¢å•
     Route::post('/order/create', 'OrderController@create');
 
-    // ÂÖ²¥Í¼
+    // è½®æ’­å›¾
     Route::get('/banner/list', 'BannerController@index');
 
-    // ÓÃ»§Ïà¹Ø
+    // ç”¨æˆ·ç›¸å…³
     Route::post('/user/wxapp/login', 'UserController@login');
 });
