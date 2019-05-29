@@ -18,19 +18,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['namespace' => 'Api'], function () {
-    // 商品详情
+
+    // 鍟嗗搧璇︽儏
     Route::get('/shop/goods/detail', 'GoodsController@show');
-    // 商品列表
+    // 鍟嗗搧鍒楄〃
     Route::post('/shop/goods/list', 'GoodsController@index');
 
-    // 所有分类
+    // 浜у搧鍒嗙被
     Route::get('/shop/goods/category/all', 'CategoryController@index');
 
-    // 生成订单
+    // 鍒涘缓璁㈠崟
     Route::post('/order/create', 'OrderController@create');
 
-    // 轮播图
+    // banner
     Route::get('/banner/list', 'BannerController@index');
-    // 用户相关
+
+    // 鐢ㄦ埛鐩稿叧
     Route::post('/user/wxapp/login', 'UserController@login');
 });

@@ -15,6 +15,7 @@ class OrderController extends Controller
     {
         $goods_infos = $request->goodsJsonStr;
 
+        $goods_infos = trim($goods_infos, '"');
         $amount = 0;
 
         $order_id = DB::table('orders')->insertGetId(
