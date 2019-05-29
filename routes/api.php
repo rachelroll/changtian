@@ -29,6 +29,8 @@ Route::group(['namespace' => 'Api'], function () {
 
     // 创建订单
     Route::post('/order/create', 'OrderController@create');
+    // 订单详情
+    Route::get('orders', 'OrderController@index');
 
     // banner
     Route::get('/banner/list', 'BannerController@index');

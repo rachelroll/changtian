@@ -8,11 +8,23 @@ use App\Order;
 use App\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
+use App\Http\Resources\OrderItem as OrderItemResource;
 
 class OrderController extends Controller
 {
     public function create(Request $request)
     {
+        $token = $request->token;
+        if (!$token) {
+            return [
+                'code' => 202,
+                'msg' => '请登录'
+            ];
+        }
+
+        $user_id = Redis::get($token);
+
         $goods_infos = $request->goodsJsonStr;
 
         $goods_infos = trim($goods_infos, '"');
@@ -24,6 +36,7 @@ class OrderController extends Controller
                 'contact' => $request->contact,
                 'address' => $request->address,
                 'comments' => $request->comments,
+                'user_id' => $user_id,
             ]
         );
 
@@ -32,6 +45,8 @@ class OrderController extends Controller
             $quantity = $goods_info->number;
 
             $good_info = Good::find($good_id);
+            $pictures = $good_info->pictures;
+            $pictures = explode($pictures,',');
 
             OrderItem::create([
                 'order_id' => $order_id,
@@ -39,7 +54,10 @@ class OrderController extends Controller
                 'quantity' => $quantity,
                 'price' => $good_info->price,
                 'name' => $good_info->name,
+                'user_id' => $user_id,
+                'cover' => $pictures[0]
             ]);
+
             $amount += $good_id * $quantity;
         }
 
@@ -51,5 +69,16 @@ class OrderController extends Controller
             'code' => 0,
             'msg' => '请等待工作人员与您联系'
         ];
+    }
+
+    public function index(Request $request)
+    {
+        $token = $request->token;
+
+        $user_id = Redis::get($token);
+
+        $orders = OrderItem::where('user_id', $user_id)->get();
+
+        return OrderItemResource::collection($orders);
     }
 }
