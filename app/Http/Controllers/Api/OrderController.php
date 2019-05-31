@@ -46,7 +46,6 @@ class OrderController extends Controller
 
             $good_info = Good::find($good_id);
             $pictures = $good_info->pictures;
-            $pictures = explode($pictures,',');
 
             OrderItem::create([
                 'order_id' => $order_id,
