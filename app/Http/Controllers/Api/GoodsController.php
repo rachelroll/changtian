@@ -16,6 +16,13 @@ class GoodsController extends Controller
 
         $good = Good::find($id);
 
+        $arr = [];
+
+        foreach ($good->pictures as $item) {
+            $arr[] = config('filesystems.disks.oss.cdnDomain') . '/' . $item;
+        }
+
+        $good->pics = $arr;
         return new GoodResource($good);
     }
 
