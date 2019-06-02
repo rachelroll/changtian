@@ -29,14 +29,18 @@ class OrderController extends Controller
 
         $goods_infos = trim($goods_infos, '"');
         $amount = 0;
-
+        //订单编号
+        $order_sn = date('YmdHis') . (time() + $user_id);
         $order_id = DB::table('orders')->insertGetId(
             [
                 'username' => $request->username,
                 'contact' => $request->contact,
                 'address' => $request->address,
                 'comments' => $request->comments,
+                'order_sn' => $order_sn,
                 'user_id' => $user_id,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
