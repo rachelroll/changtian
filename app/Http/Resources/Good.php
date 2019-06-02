@@ -20,8 +20,10 @@ class Good extends JsonResource
                 'basicInfo' => [
                     'id' => $this->id,
                     'name' => $this->name, // 商品名称
+                    'intro' => $this->intro, // 简介
                     'minprice' => $this->price,
-                    'pic' => $this->pictures, //封面图
+                    'cover' => $this->cover, //封面图
+                    'pic' => $this->pics,
                     'shipping_date' => $this->shipping_date,
                     'shipping_place' => $this->shipping_place,
                     'content' => $this->intro, // 商品简介

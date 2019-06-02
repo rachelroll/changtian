@@ -12,8 +12,8 @@ class Good extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function getPicturesAttribute($value)
+    public function getPicturesAttribute($pictures)
     {
-        return explode(',', $value);
+        return json_decode($pictures, true) ?: [];
     }
 }

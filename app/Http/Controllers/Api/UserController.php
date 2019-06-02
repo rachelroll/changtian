@@ -11,16 +11,15 @@ use Illuminate\Support\Facades\Redis;
 
 class UserController extends Controller
 {
-
     public function login(Request $request)
     {
         $code = $request->code;
 
-        //ÅäÖÃappid
-        $appid = env('APPID');
-        //ÅäÖÃappscret
-        $secret = env('APPSECRET');
-        //api½Ó¿Ú
+        //é…ç½®appid
+        $appid = 'wxd1544fa92688e370';
+        //é…ç½®appscret
+        $secret = 'c7ff047c25a4459e58d2dfd40c79a0da';
+        //apiæ¥å£
         $api = "https://api.weixin.qq.com/sns/jscode2session?appid={$appid}&secret={$secret}&js_code={$code}&grant_type=authorization_code";
 
         $res = Utils::curl($api);
@@ -30,12 +29,12 @@ class UserController extends Controller
         $openid = $res->openid;
         $session_key = $res->session_key;
 
-        // ¸ù¾İ openid ²éÓÃ»§±íÀïÊÇ·ñÓĞÕâ¸öÓÃ»§
+        // æ ¹æ® openid æŸ¥ç”¨æˆ·è¡¨é‡Œæ˜¯å¦æœ‰è¿™ä¸ªç”¨æˆ·
         $user_id = optional(User::where('openid', $openid)->first())->id;
         if ($user_id) {
-            // °ÑÓÃ»§ ID ¼ÓÃÜÉú³É token
+            // æŠŠç”¨æˆ· ID åŠ å¯†ç”Ÿæˆ token
             $token = md5($user_id, config('salt'));
-            Redis::set($token, $user_id); // ´æÈë session
+            Redis::set($token, $user_id); // å­˜å…¥ session
 
             return [
                 'code' => 0,
@@ -45,19 +44,19 @@ class UserController extends Controller
             ];
         }
         else{
-            // °Ñ session_key ºÍ openid ´æÈëÊı¾İ¿â, ²¢·µ»ØÓÃ»§ id
+            // æŠŠ session_key å’Œ openid å­˜å…¥æ•°æ®åº“, å¹¶è¿”å›ç”¨æˆ· id
             $id = DB::table('users')->insertGetId(
                 ['session_key' => $session_key,
                  'openid' => $openid,
                  'created_at' => now(),
                  'updated_at' => now()]
             );
-            // Èç¹ûÓÃ»§´¢´æ³É¹¦
+            // å¦‚æœç”¨æˆ·å‚¨å­˜æˆåŠŸ
             if ($id) {
-                // °ÑÓÃ»§ ID ¼ÓÃÜÉú³É token
+                // æŠŠç”¨æˆ· ID åŠ å¯†ç”Ÿæˆ token
                 $token = md5($id, config('salt'));
 
-                Redis::set($token, $id); // ´æÈë session
+                Redis::set($token, $id); // å­˜å…¥ session
                 return $token;
             }else {
                 return [

@@ -16,6 +16,12 @@ class GoodsController extends Controller
 
         $good = Good::find($id);
 
+        $arr = [];
+        foreach ($good->pictures as $item) {
+            $arr[] = config('filesystems.disks.oss.cdnDomain') . '/' . $item;
+        }
+
+        $good->pics = $arr;
         return new GoodResource($good);
     }
 
@@ -24,9 +30,13 @@ class GoodsController extends Controller
     {
         if($request->id) {
             $goods = Good::where('category_id', $request->id)->get();
-            return GoodResource::collection($goods);
+        } else {
+            $goods = Good::all();
+        }
+        foreach ($goods as &$good) {
+            $good->cover = config('filesystems.disks.oss.cdnDomain') . '/' . $good->pictures[0];
         }
 
-        return GoodResource::collection(Good::all());
+        return GoodResource::collection($goods);
     }
 }
