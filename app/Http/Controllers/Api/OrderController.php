@@ -78,6 +78,10 @@ class OrderController extends Controller
 
         $orders = OrderItem::where('user_id', $user_id)->get();
 
+        foreach ($orders as &$order) {
+            $order->cover = config('filesystems.disks.oss.cdnDomain') . '/' . $order->cover;
+        }
+
         return OrderItemResource::collection($orders);
     }
 }
