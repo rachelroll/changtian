@@ -29,6 +29,8 @@ class OrderController extends Controller
 
         $goods_infos = trim($goods_infos, '"');
         $amount = 0;
+
+        $comments = $request->comments ? $request->comments : '';
         //订单编号
         $order_sn = date('YmdHis') . (time() + $user_id);
         $order_id = DB::table('orders')->insertGetId(
@@ -36,7 +38,7 @@ class OrderController extends Controller
                 'username' => $request->username,
                 'contact' => $request->contact,
                 'address' => $request->address,
-                'comments' => $request->comments,
+                'comments' => $comments,
                 'order_sn' => $order_sn,
                 'user_id' => $user_id,
                 'created_at' => now(),
@@ -81,6 +83,10 @@ class OrderController extends Controller
         $user_id = Redis::get($token);
 
         $orders = OrderItem::where('user_id', $user_id)->get();
+
+        foreach ($orders as &$order) {
+            $order->cover = config('filesystems.disks.oss.cdnDomain') . '/' . $order->cover;
+        }
 
         return OrderItemResource::collection($orders);
     }
