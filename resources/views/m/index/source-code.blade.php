@@ -16,7 +16,7 @@
 <body>
 <div class="alert alert-success" role="alert">
     <div class="row">
-        <h5 class="alert-heading d-block mx-auto">溯源码编号:NO.12345666666</h5>
+        <h5 class="alert-heading d-block mx-auto">溯源码编号:NO.{{ $source_code }}</h5>
     </div>
 
 </div>
@@ -46,13 +46,13 @@
         </div>
     </div>
     <div class="row">
+        @if($order_item->source_attribute)
         <ul class=" list-group-flush">
-            <li class="list-group-item">品名:新鲜西瓜ssdfsdf </li>
-            <li class="list-group-item">品名:新鲜西瓜🍉</li>
-            <li class="list-group-item">品名:新鲜西瓜🍉</li>
-            <li class="list-group-item">品名:新鲜西瓜🍉</li>
-            <li class="list-group-item">品名:新鲜西瓜🍉</li>
+            @foreach($order_item->source_attribute as $attr)
+            <li class="list-group-item">{{ $attr }} </li>
+                @endforeach
         </ul>
+            @endif
     </div>
 </div>
 
