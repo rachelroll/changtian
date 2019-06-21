@@ -22,19 +22,19 @@
 </div>
 <div class="row">
     <div class="d-block mx-auto">
-        <div class="text-info">查询记录</div>
+        <div class="text-info m-2">查询记录</div>
     </div>
 </div>
 <br>
 <div class="container">
     <div class="row">
+
         <div class="d-block mx-auto">
-            <img src="https://via.placeholder.com/50X50/D95353/ccc?text=ross" class="rounded-circle" alt=""/>
-            <img src="https://via.placeholder.com/50X50/D95353/ccc?text=ross" class="rounded-circle" alt=""/>
-            <img src="https://via.placeholder.com/50X50/D95353/ccc?text=ross" class="rounded-circle" alt=""/>
-            <img src="https://via.placeholder.com/50X50/D95353/ccc?text=ross" class="rounded-circle" alt=""/>
-            <img src="https://via.placeholder.com/50X50/D95353/ccc?text=ross" class="rounded-circle" alt=""/>
+            @foreach($source_code_model as $source_model)
+            <img width="40" src="{{ $source_model->avatar }}" class="rounded-circle" alt=""/>
+            @endforeach
         </div>
+
     </div>
 </div>
 
@@ -42,7 +42,7 @@
     <hr>
     <div class="row">
         <div class="d-block mx-auto">
-            <div class="text-info">产品信息</div>
+            <div class="text-info m-2">产品信息</div>
         </div>
     </div>
     <div class="row">
@@ -60,7 +60,7 @@
     <hr>
     <div class="row">
         <div class="d-block mx-auto">
-            <div class="text-info">追溯信息</div>
+            <div class="text-info m-2">追溯信息</div>
         </div>
     </div>
     <div class="row p-3">
@@ -105,7 +105,7 @@
     <hr>
     <div class="row">
         <div class="d-block mx-auto">
-            <div class="text-info">企业信息</div>
+            <div class="text-info m-2">企业信息</div>
         </div>
     </div>
     <div class="row p-3">
