@@ -14,6 +14,8 @@ class IndexController extends Controller
     public function sourceCode($id)
     {
         $user = session('wechat.oauth_user.default'); // 拿到授权用户资料
+
+        info('user:' . json_encode($user));
         $source_code = $id;
         $hashids = new Hashids('ross',10,'123456789ABCDEFGH');
         $id = $hashids->decode($id);
