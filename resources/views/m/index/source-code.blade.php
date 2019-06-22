@@ -46,13 +46,13 @@
         </div>
     </div>
     <div class="row">
-        @if($order_item->source_attribute)
         <ul class=" list-group-flush">
-            @foreach($order_item->source_attribute as $attr)
-            <li class="list-group-item">{{ $attr }} </li>
-                @endforeach
+            <li class="list-group-item">净重: {{ $order_item->net_weight }} </li>
+            <li class="list-group-item">特色: {{ $order_item->feature }} </li>
+            <li class="list-group-item">保鲜期: {{ $order_item->fresh_time }} </li>
+            <li class="list-group-item">溯源地: {{ $order_item->source_location }} </li>
+            <li class="list-group-item">溯源人: {{ $order_item->source_person }} </li>
         </ul>
-            @endif
     </div>
 </div>
 
@@ -67,17 +67,17 @@
         <div class="col">
             <i class="far fa-clock pl-3 text-info" style="font-size: 32px;"></i>
             <div >生产时间:</div>
-            <div >2018-11-11</div>
+            <div >{{ date('Y-m-d',strtotime($order_item->created_at ))}}</div>
         </div>
         <div class="col">
             <i class="fa fa-clock pl-3 text-info" style="font-size: 32px;"></i>
             <div>入库时间:</div>
-            <div>2018-11-11</div>
+            <div>{{ date('Y-m-d',strtotime($order_item->product_at ))}}</div>
         </div>
         <div class="col">
             <i class="fas fa-hourglass-start pl-3 text-info" style="font-size: 32px;"></i>
             <div>下单时间:</div>
-            <div>2018-11-11</div>
+            <div>{{ date('Y-m-d',strtotime($order_item->storage_at ))}}</div>
         </div>
     </div>
     <br>
@@ -85,17 +85,17 @@
         <div class="col">
             <i class="fas fa-outdent pl-3 text-info" style="font-size: 32px;"></i>
             <div>出库时间:</div>
-            <div>2018-11-11</div>
+            <div>{{ date('Y-m-d',strtotime($order_item->out_storage_at ))}}</div>
         </div>
         <div class="col">
             <i class="fas fa-truck pl-3 text-info" style="font-size: 32px;"></i>
             <div>发货时间:</div>
-            <div>2018-11-11</div>
+            <div>{{ date('Y-m-d',strtotime($order_item->delivery_at ))}}</div>
         </div>
         <div class="col">
             <i class="fab fa-get-pocket pl-3 text-info" style="font-size: 32px;"></i>
             <div>收货时间:</div>
-            <div>2018-11-11</div>
+            <div>{{ date('Y-m-d',strtotime($order_item->recept_at ))}}</div>
         </div>
     </div>
 </div>
