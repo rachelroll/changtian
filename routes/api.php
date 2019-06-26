@@ -37,4 +37,10 @@ Route::group(['namespace' => 'Api'], function () {
 
     // 用户相关
     Route::post('/user/wxapp/login', 'UserController@login');
+
+    // 获取地址
+    Route::get('/user/shipping-address/default', 'AddressController@index');
+    // 新增收货地址
+    Route::get('/user/shipping-address/add', 'AddressController@add');
+
 });
