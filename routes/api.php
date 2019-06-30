@@ -38,9 +38,16 @@ Route::group(['namespace' => 'Api'], function () {
     // 用户相关
     Route::post('/user/wxapp/login', 'UserController@login');
 
-    // 获取地址
-    Route::get('/user/shipping-address/default', 'AddressController@index');
+    // 获取默认地址
+    Route::get('/user/shipping-address/default', 'AddressController@default');
+    // 获取地址列表
+    Route::get('/user/shipping-address/list', 'AddressController@index');
     // 新增收货地址
-    Route::get('/user/shipping-address/add', 'AddressController@add');
-
+    Route::post('/user/shipping-address/add', 'AddressController@add');
+    // 更新收货地址
+    Route::post('/user/shipping-address/update', 'AddressController@update');
+    // 获取省份信息
+    Route::get('/common/region/v2/province', 'AddressController@province');
+    // 获取地址详细信息
+    Route::get('/user/shipping-address/detail', 'AddressController@detail');
 });
