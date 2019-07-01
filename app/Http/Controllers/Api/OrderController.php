@@ -35,8 +35,8 @@ class OrderController extends Controller
         $order_sn = date('YmdHis') . (time() + $user_id);
         $order_id = DB::table('orders')->insertGetId(
             [
-                'username' => $request->username,
-                'contact' => $request->contact,
+                'username' => $request->linkman,
+                'contact' => $request->mobile,
                 'address' => $request->address,
                 'comments' => $comments,
                 'order_sn' => $order_sn,
@@ -45,6 +45,7 @@ class OrderController extends Controller
                 'updated_at' => now(),
             ]
         );
+
 
         foreach (json_decode($goods_infos) as $goods_info) {
             $good_id = $goods_info->goodsId;
