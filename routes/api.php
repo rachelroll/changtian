@@ -23,14 +23,17 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('/shop/goods/detail', 'GoodsController@show');
     // 商品列表
     Route::post('/shop/goods/list', 'GoodsController@index');
-
     // 产品分类
     Route::get('/shop/goods/category/all', 'CategoryController@index');
 
     // 创建订单
     Route::post('/order/create', 'OrderController@create');
-    // 订单详情
-    Route::get('orders', 'OrderController@index');
+    // 我的订单列表
+    Route::get('/orders', 'OrderController@index');
+    // 订单列表
+    Route::post('/order/list', 'OrderController@list');
+    // 订单状态
+    Route::get('/order/statistics', 'OrderController@statistics');
 
     // banner
     Route::get('/banner/list', 'BannerController@index');
@@ -50,4 +53,12 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('/common/region/v2/province', 'AddressController@province');
     // 获取地址详细信息
     Route::get('/user/shipping-address/detail', 'AddressController@detail');
+
+
+    // 请求微信统一下单接口
+    Route::post('/pay/wx/wxapp', 'PaymentController@place_order')->name('api.payment.place_order');
+    // 请求微信接口, 查看订单支付状态
+    Route::get('/payment/paid', 'PaymentController@paid')->name('api.payment.paid');
+    // 接收微信的通知
+    Route::post('/payment/notify', 'paymentController@notify');
 });
