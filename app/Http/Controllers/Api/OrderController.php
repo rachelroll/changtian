@@ -108,7 +108,9 @@ class OrderController extends Controller
             ];
         }
 
-        $orders = Order::withCount('orderItem')->where('user_id', $user_id)->get();
+        $status = $request->status;
+
+        $orders = Order::withCount('orderItem')->where('user_id', $user_id)->where('status', $status)->get();
 
         $orderLists = [];
         $goodsMap = [];

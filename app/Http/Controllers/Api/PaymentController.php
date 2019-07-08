@@ -8,6 +8,7 @@ use App\Paylog;
 use App\User;
 use EasyWeChat\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class PaymentController extends Controller
@@ -68,7 +69,6 @@ class PaymentController extends Controller
             'openid' => $openid
         ]);
 
-
         if ($result['return_code'] == 'SUCCESS') {
             //$timeStamp = now();
             //$pay_sign = MD5('appId='.config('wechat.payment.default.app_id'). '&nonceStr='. $result['nonce_str'].'&package=prepay_id='. $result['prepay_id'].'&signType=MD5&timeStamp='.$timeStamp.'&key='. config('wechat.payment.default.key'));
@@ -87,6 +87,7 @@ class PaymentController extends Controller
     // 接收微信支付状态的通知
     public function notify()
     {
+        Log::info('收到微信通知-开始');
         $app = $this->payment();
         // 用 easywechat 封装的方法接收微信的信息, 根据 $message 的内容进行处理, 之后要告知微信服务器处理好了, 否则微信会一直请求这个 url, 发送信息
         $response = $app->handlePaidNotify(function($message, $fail){
@@ -96,6 +97,7 @@ class PaymentController extends Controller
                 return true; // 如果已经生成订单, 表示已经处理完了, 告诉微信不用再通知了
             }
 
+            Log::info('收到微信通知');
             // 查看支付日志
             $payLog = PayLog::where('out_trade_no', $message['out_trade_no'])->first();
             if (!$payLog || $payLog->paid_at) { // 如果订单不存在 或者 订单已经支付过了
@@ -109,7 +111,7 @@ class PaymentController extends Controller
                     // 更新支付时间为当前时间
                     $payLog->paid_at = now();
 
-                    // 创建订单记录
+                    // 更新订单
                     Order::where('id', $order->id)->update([
                         'order_sn' => $message['out_trade_no'],
                         'amount' => $message['total_fee'],
