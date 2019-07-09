@@ -70,6 +70,7 @@ class PaymentController extends Controller
         ]);
 
         if ($result['return_code'] == 'SUCCESS') {
+
             //$timeStamp = now();
             //$pay_sign = MD5('appId='.config('wechat.payment.default.app_id'). '&nonceStr='. $result['nonce_str'].'&package=prepay_id='. $result['prepay_id'].'&signType=MD5&timeStamp='.$timeStamp.'&key='. config('wechat.payment.default.key'));
             //$pay_sign = strtoupper($pay_sign);
@@ -89,6 +90,7 @@ class PaymentController extends Controller
     {
         Log::info('收到微信通知-开始');
         $app = $this->payment();
+
         // 用 easywechat 封装的方法接收微信的信息, 根据 $message 的内容进行处理, 之后要告知微信服务器处理好了, 否则微信会一直请求这个 url, 发送信息
         $response = $app->handlePaidNotify(function($message, $fail){
             // 首先查看 order 表, 如果 order 表有记录, 表示已经支付过了
@@ -166,5 +168,26 @@ class PaymentController extends Controller
         });
         // 这里是必须这样返回的, 会发送给微信服务器处理结果
         return $response;
+    }
+
+    public function paid(Request $request)
+    {
+        $out_trade_no = $request->get('out_trade_no');
+
+        $app = $this->payment();
+        // 用 easywechat 封装的方法请求微信
+        $result = $app->order->queryByOutTradeNumber($out_trade_no);
+
+        if ($result['trade_state'] === 'SUCCESS') {
+            return [
+                'code' => 200,
+                'msg' => 'paid'
+            ];
+        }else{
+            return [
+                'code' => 202,
+                'msg' => 'not paid'
+            ];
+        }
     }
 }

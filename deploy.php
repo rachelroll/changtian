@@ -89,5 +89,3 @@ after('deploy:failed', 'deploy:unlock');
 //after('deploy', 'restart:supervisorctl');
 
 after('deploy', 'success');
-
-
