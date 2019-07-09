@@ -63,12 +63,14 @@ task('deploy', [
     'deploy:vendors',
     'deploy:writable',
     'artisan:storage:link',
-    'artisan:view:clear',
-    'artisan:optimize',
+    'artisan:view:cache',
+    'artisan:config:cache',
+    'artisan:optimize:clear',
     'deploy:symlink',
     'deploy:unlock',
     'cleanup',
 ]);
+
 
 task('reload:php-fpm', function () {
     run('service php7.2-fpm restart');
