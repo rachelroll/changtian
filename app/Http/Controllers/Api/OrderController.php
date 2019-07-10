@@ -127,11 +127,11 @@ class OrderController extends Controller
                     $statusStr = '待收货';
                     break;
                 case 3:
-                    $statusStr = '待评价';
-                    break;
-                case 4:
                     $statusStr = '已完成';
                     break;
+                //case 4:
+                //    $statusStr = '已完成';
+                //    break;
             }
 
             $orderLists[$key]['amount'] = $order->amount;
