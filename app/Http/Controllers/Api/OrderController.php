@@ -116,23 +116,23 @@ class OrderController extends Controller
         $goodsMap = [];
 
         foreach ($orders as $key => $order) {
-            switch($order->status){
-                case 0:
-                    $statusStr = '待支付';
-                    break;
-                case 1:
-                    $statusStr = '待发货';
-                    break;
-                case 2:
-                    $statusStr = '待收货';
-                    break;
-                case 3:
-                    $statusStr = '已完成';
-                    break;
-                //case 4:
-                //    $statusStr = '已完成';
-                //    break;
-            }
+            //switch($order->status){
+            //    case 0:
+            //        $statusStr = '待支付';
+            //        break;
+            //    case 1:
+            //        $statusStr = '待发货';
+            //        break;
+            //    case 2:
+            //        $statusStr = '待收货';
+            //        break;
+            //    case 3:
+            //        $statusStr = '已完成';
+            //        break;
+            //    //case 4:
+            //    //    $statusStr = '已完成';
+            //    //    break;
+            //}
 
             $orderLists[$key]['amount'] = $order->amount;
             $orderLists[$key]['dateAdd'] = $order->created_at;
@@ -144,7 +144,7 @@ class OrderController extends Controller
             $orderLists[$key]['orderNumber'] = $order->order_sn;
             $orderLists[$key]['remark'] = $order->remark;
             $orderLists[$key]['status'] = $order->status;
-            $orderLists[$key]['statusStr'] = $statusStr;
+            $orderLists[$key]['statusStr'] = Order::STATUS[$order->status];
             $orderLists[$key]['userId'] = $user_id;
 
             $orderItems = OrderItem::where('order_id', $order->id)->get();
@@ -198,6 +198,62 @@ class OrderController extends Controller
                 "count_id_success" => $arr[4]
             ],
             'msg' => 'success',
+        ];
+    }
+
+    // 订单详情
+    public function detail(Request $request)
+    {
+        //$token = $request->token;
+        //$user_id = Redis::get($token);
+        //if (!$user_id) {
+        //    return [
+        //        'code' => 202,
+        //        'msg' => '请登录'
+        //    ];
+        //}
+
+        $order_id = $request->id;
+
+        $order = Order::withCount('orderItems')->where('id', $order_id)->first();
+
+        $orderInfo = [];
+
+        $orderInfo['amount'] = $order->amount;
+        $orderInfo['dateAdd'] = date('Y-m-d H:i:s', strtotime($order->created_at));
+        $orderInfo['dateClose'] = date('Y-m-d H:i:s', strtotime($order->created_at) + 1800);
+        $orderInfo['goodsNumber'] = $order->order_items_count;
+        $orderInfo['hasRefund'] = $order->hasRefund;
+        $orderInfo['isPay'] = $order->isPay;
+        $orderInfo['orderNumber'] = $order->order_sn;
+        $orderInfo['remark'] = $order->remark;
+        $orderInfo['status'] = Order::STATUS[$order->status];
+        $orderInfo['amount'] = $order->amount;
+        $orderInfo['userId'] = $order->user_id;
+
+        $order_items = $order->orderItems;
+
+        if ($order_items) {
+            $goods = [];
+            foreach ($order_items as $order_item) {
+                $goods['amount'] = $order_item->price;
+                $goods['goodsId'] = $order_item->good_id;
+                $goods['goodsName'] = $order_item->name;
+                $goods['id'] = $order_item->id;
+                $goods['number'] = $order_item->quantity;
+                $goods['orderId'] = $order_item->order_id;
+                $goods['pic'] = $order_item->cover;
+                $goods['userId'] = $order_item->user_id;
+            }
+        }
+
+        return [
+            'code' => 0,
+            'data' => [
+                'orderInfo' => $orderInfo,
+                'goods' => $goods,
+            ],
+            'msg' => 'success'
         ];
     }
 }

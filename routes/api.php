@@ -34,6 +34,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('/order/list', 'OrderController@list');
     // 订单状态
     Route::get('/order/statistics', 'OrderController@statistics');
+    // 订单详情
+    Route::get('order/detail', 'OrderController@detail');
 
     // banner
     Route::get('/banner/list', 'BannerController@index');
