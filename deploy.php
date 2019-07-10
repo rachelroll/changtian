@@ -71,6 +71,7 @@ task('deploy', [
     'cleanup',
 ]);
 
+
 task('reload:php-fpm', function () {
     run('service php7.2-fpm restart');
 });

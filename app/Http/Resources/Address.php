@@ -14,6 +14,8 @@ class Address extends JsonResource
      */
     public function toArray($request)
     {
+
+
         return [
             'code' => 0,
             'data' => [
@@ -25,6 +27,9 @@ class Address extends JsonResource
                 'cityId' => $this->cityId,
                 'districtId' => $this->districtId,
                 'code' => $this->code,
+                'provinceStr' => $this->provinceStr,
+                'areaStr' => $this->areaStr,
+                'cityStr' => $this->cityStr,
             ],
             'msg' => 'success'
         ];
