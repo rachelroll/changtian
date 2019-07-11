@@ -110,30 +110,12 @@ class OrderController extends Controller
 
         $status = $request->status;
 
-        $orders = Order::withCount('orderItem')->where('user_id', $user_id)->where('status', $status)->get();
+        $orders = Order::withCount('orderItems')->where('user_id', $user_id)->where('status', $status)->get();
 
         $orderLists = [];
         $goodsMap = [];
 
         foreach ($orders as $key => $order) {
-            //switch($order->status){
-            //    case 0:
-            //        $statusStr = '待支付';
-            //        break;
-            //    case 1:
-            //        $statusStr = '待发货';
-            //        break;
-            //    case 2:
-            //        $statusStr = '待收货';
-            //        break;
-            //    case 3:
-            //        $statusStr = '已完成';
-            //        break;
-            //    //case 4:
-            //    //    $statusStr = '已完成';
-            //    //    break;
-            //}
-
             $orderLists[$key]['amount'] = $order->amount;
             $orderLists[$key]['dateAdd'] = $order->created_at;
             $orderLists[$key]['dateClose'] = $order->created_at;
