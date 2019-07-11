@@ -208,6 +208,15 @@ class OrderController extends Controller
         $orderInfo['amount'] = $order->amount;
         $orderInfo['userId'] = $order->user_id;
 
+        if ($order->trackingNumber) {
+            $logistics = [
+                'trackingNumber' => $order->trackingNumber,
+            ];
+        } else {
+            $logistics = false;
+        }
+
+
         $order_items = $order->orderItems;
 
         if ($order_items) {
@@ -229,6 +238,7 @@ class OrderController extends Controller
             'data' => [
                 'orderInfo' => $orderInfo,
                 'goods' => $goods,
+                'logistics' => $logistics
             ],
             'msg' => 'success'
         ];
