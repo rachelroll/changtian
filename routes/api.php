@@ -64,5 +64,5 @@ Route::group(['namespace' => 'Api'], function () {
     // 请求微信接口, 查看订单支付状态
     Route::get('/payment/paid', 'PaymentController@paid')->name('api.payment.paid');
     // 接收微信的通知
-    Route::post('/payment/notify', 'paymentController@notify');
+    Route::post('/payment/notify', 'PaymentController@notify');
 });
