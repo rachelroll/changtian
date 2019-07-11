@@ -14,20 +14,12 @@ use App\Http\Resources\OrderItem as OrderItemResource;
 
 class OrderController extends Controller
 {
+    // 创建订单
     public function create(Request $request)
     {
         $token = $request->token;
 
-        $user_id = Redis::get($token);
-        if (!$user_id) {
-            return [
-                'original_token' => $request->token,
-                'token' => $token,
-                'user_id' => $user_id,
-                'code' => 202,
-                'msg' => '请登录'
-            ];
-        }
+        $user_id = $this->checkTocken($token);
 
         $goods_infos = $request->goodsJsonStr;
 
@@ -87,7 +79,7 @@ class OrderController extends Controller
     {
         $token = $request->token;
 
-        $user_id = Redis::get($token);
+        $user_id = $this->checkTocken($token);
 
         $orders = OrderItem::where('user_id', $user_id)->get();
 
@@ -98,16 +90,11 @@ class OrderController extends Controller
         return OrderItemResource::collection($orders);
     }
 
+    // 订单列表
     public function list(Request $request)
     {
         $token = $request->token;
-        $user_id = Redis::get($token);
-        if (!$user_id) {
-            return [
-                'code' => 202,
-                'msg' => '请登录'
-            ];
-        }
+        $user_id = $this->checkTocken($token);
 
         $status = $request->status;
 
@@ -153,16 +140,11 @@ class OrderController extends Controller
         ];
     }
 
+    // 订单状态
     public function statistics(Request $request)
     {
         $token = $request->token;
-        $user_id = Redis::get($token);
-        if (!$user_id) {
-            return [
-                'code' => 202,
-                'msg' => '请登录'
-            ];
-        }
+        $user_id = $this->checkTocken($token);
 
         $arr = [0, 0, 0, 0, 0, 0];
         $orders = Order::where('user_id', $user_id)->get();
@@ -255,6 +237,7 @@ class OrderController extends Controller
         ];
     }
 
+    // 确认收货
     public function delivery(Request $request)
     {
         $token = $request->token;
@@ -274,6 +257,7 @@ class OrderController extends Controller
         }
     }
 
+    // 检查 token
     private function checkTocken($token)
     {
         $user_id = Redis::get($token);

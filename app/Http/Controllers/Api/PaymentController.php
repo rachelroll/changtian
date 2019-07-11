@@ -70,25 +70,30 @@ class PaymentController extends Controller
         ]);
 
         if ($result['return_code'] == 'SUCCESS') {
+            if ($result['result_code'] == 'SUCCESS') {
+                $prepayId = $result['prepay_id'];
+                $config = $jssdk->sdkConfig($prepayId);
 
-            //$timeStamp = now();
-            //$pay_sign = MD5('appId='.config('wechat.payment.default.app_id'). '&nonceStr='. $result['nonce_str'].'&package=prepay_id='. $result['prepay_id'].'&signType=MD5&timeStamp='.$timeStamp.'&key='. config('wechat.payment.default.key'));
-            //$pay_sign = strtoupper($pay_sign);
-            $prepayId = $result['prepay_id'];
-            $config = $jssdk->sdkConfig($prepayId);
-
-            return [
-                'code' => 0,
-                'data' => $config,
-                'msg' => 'success'
-            ];
+                return [
+                    'code' => 0,
+                    'data' => $config,
+                    'msg' => 'success'
+                ];
+            } else {
+                return [
+                    'code' => 202,
+                    'msg' => $result['err_code_des'],
+                ];
+            }
         }
     }
 
     // 接收微信支付状态的通知
     public function notify()
     {
-        Log::info('收到微信通知-开始');
+        $data = file_get_contents("php://input");
+        Log::info('收到微信通知-开始'.$data);
+
         $app = $this->payment();
 
         // 用 easywechat 封装的方法接收微信的信息, 根据 $message 的内容进行处理, 之后要告知微信服务器处理好了, 否则微信会一直请求这个 url, 发送信息
