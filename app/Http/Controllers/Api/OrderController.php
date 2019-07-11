@@ -224,7 +224,7 @@ class OrderController extends Controller
                 $goods[$key]['id'] = $order_item->id;
                 $goods[$key]['number'] = $order_item->quantity;
                 $goods[$key]['orderId'] = $order_item->order_id;
-                $goods[$key]['pic'] = $order_item->cover;
+                $goods[$key]['pic'] = config('filesystems.disks.oss.cdnDomain') . '/' . $order_item->cover;
                 $goods[$key]['userId'] = $order_item->user_id;
             }
         }
