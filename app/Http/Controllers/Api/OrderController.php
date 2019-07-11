@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\ChinaArea;
 use App\Good;
 use App\Http\Controllers\Controller;
 use App\Order;
@@ -208,9 +209,19 @@ class OrderController extends Controller
         $orderInfo['amount'] = $order->amount;
         $orderInfo['userId'] = $order->user_id;
 
+        $provinceStr = ChinaArea::where('code', substr($order->provinceId,0,6))->first()->name;
+        $cityStr = ChinaArea::where('code', substr($order->cityId,0,6))->first()->name;
+        $districtStr = ChinaArea::where('code', substr($order->districtId,0,6))->first()->name;
+
         if ($order->trackingNumber) {
             $logistics = [
                 'trackingNumber' => $order->trackingNumber,
+                'linkMan' => $order->username,
+                'mobile' => $order->contact,
+                'address' => $order->address,
+                'provinceStr' => $provinceStr,
+                'cityStr' => $cityStr,
+                'areaStr' => $districtStr,
             ];
         } else {
             $logistics = false;
