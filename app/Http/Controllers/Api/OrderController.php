@@ -186,14 +186,8 @@ class OrderController extends Controller
     // 订单详情
     public function detail(Request $request)
     {
-        //$token = $request->token;
-        //$user_id = Redis::get($token);
-        //if (!$user_id) {
-        //    return [
-        //        'code' => 202,
-        //        'msg' => '请登录'
-        //    ];
-        //}
+        $token = $request->token;
+        $user_id = $this->checkTocken($token);
 
         $order_id = $request->id;
 
@@ -238,5 +232,37 @@ class OrderController extends Controller
             ],
             'msg' => 'success'
         ];
+    }
+
+    public function delivery(Request $request)
+    {
+        $token = $request->token;
+        $user_id = $this->checkTocken($token);
+
+        $order_id = $request->orderId;
+
+        $bool = Order::where('id', $order_id)->update([
+            'status' => 3
+        ]);
+
+        if ($bool) {
+            return [
+                'code' => 0,
+                'msg' => 'success'
+            ];
+        }
+    }
+
+    private function checkTocken($token)
+    {
+        $user_id = Redis::get($token);
+        if (!$user_id) {
+            return [
+                'code' => 202,
+                'msg' => '请登录'
+            ];
+        } else {
+            return $user_id;
+        }
     }
 }
