@@ -217,15 +217,15 @@ class OrderController extends Controller
 
         if ($order_items) {
             $goods = [];
-            foreach ($order_items as $order_item) {
-                $goods['amount'] = $order_item->price;
-                $goods['goodsId'] = $order_item->good_id;
-                $goods['goodsName'] = $order_item->name;
-                $goods['id'] = $order_item->id;
-                $goods['number'] = $order_item->quantity;
-                $goods['orderId'] = $order_item->order_id;
-                $goods['pic'] = $order_item->cover;
-                $goods['userId'] = $order_item->user_id;
+            foreach ($order_items as $key => $order_item) {
+                $goods[$key]['amount'] = $order_item->price;
+                $goods[$key]['goodsId'] = $order_item->good_id;
+                $goods[$key]['goodsName'] = $order_item->name;
+                $goods[$key]['id'] = $order_item->id;
+                $goods[$key]['number'] = $order_item->quantity;
+                $goods[$key]['orderId'] = $order_item->order_id;
+                $goods[$key]['pic'] = $order_item->cover;
+                $goods[$key]['userId'] = $order_item->user_id;
             }
         }
 
