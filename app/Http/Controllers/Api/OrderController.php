@@ -209,7 +209,8 @@ class OrderController extends Controller
         $orderInfo['isPay'] = $order->isPay;
         $orderInfo['orderNumber'] = $order->order_sn;
         $orderInfo['remark'] = $order->remark;
-        $orderInfo['status'] = Order::STATUS[$order->status];
+        $orderInfo['status'] = $order->status;
+        $orderInfo['statusStr'] = Order::STATUS[$order->status];
         $orderInfo['amount'] = $order->amount;
         $orderInfo['userId'] = $order->user_id;
 
