@@ -43,7 +43,11 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('/banner/list', 'BannerController@index');
 
     // 用户相关
+    // 登录
     Route::post('/user/wxapp/login', 'UserController@login');
+    // 用户信息
+    Route::get('user/detail', 'UserController@detail');
+
 
     // 获取默认地址
     Route::get('/user/shipping-address/default', 'AddressController@default');

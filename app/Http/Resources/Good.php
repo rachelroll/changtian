@@ -27,7 +27,8 @@ class Good extends JsonResource
                     'shipping_date' => $this->shipping_date,
                     'shipping_place' => $this->shipping_place,
                     'content' => $this->intro, // 商品简介
-                    'stores' => 100
+                    'stores' => 100,
+                    'size' => $this->size, // 规格与包装
                 ],
                 'category' => [
                     'name' => '水果'

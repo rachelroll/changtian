@@ -66,4 +66,11 @@ class UserController extends Controller
             }
         }
     }
+
+    public function detail(Request $request)
+    {
+        $token = $request->token;
+
+
+    }
 }
