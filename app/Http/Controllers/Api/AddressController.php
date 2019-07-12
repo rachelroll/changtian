@@ -91,13 +91,16 @@ class AddressController extends Controller
                 'contact_name' => $contact_name,
                 'phone'        => $phone,
                 'code'         => $code,
-                'isDefault'    => '',
+                'isDefault'    => 1,
                 'provinceStr'  => $provinceStr,
                 'areaStr'      => $areaStr,
                 'cityStr'      => $cityStr,
             ]);
 
         if ($bool) {
+            Address::where('isDefault', 1)->update([
+                'isDefault' => 0
+            ]);
             return [
                 'code' => 0,
                 'msg'  => 'success',
@@ -113,7 +116,7 @@ class AddressController extends Controller
     // 获取默认收货地址
     public function default()
     {
-        $address = Address::where('isDefault', 'true')->first();
+        $address = Address::where('isDefault', 1)->first();
 
         if ($address) {
             return new AddressResource($address);

@@ -197,7 +197,8 @@ class OrderController extends Controller
 
         if ($order->trackingNumber) {
             $logistics = [
-                'trackingNumber' => $order->trackingNumber,
+                'express_name' => $order->express_name,
+                'express_number' => $order->express_number,
                 'linkMan' => $order->username,
                 'mobile' => $order->contact,
                 'address' => $order->address,
