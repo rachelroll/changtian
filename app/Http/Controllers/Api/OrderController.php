@@ -105,7 +105,7 @@ class OrderController extends Controller
 
         foreach ($orders as $key => $order) {
             $orderLists[$key]['amount'] = $order->amount;
-            $orderLists[$key]['dateAdd'] = date('Y-m-d H:i:s', $order->created_at);
+            $orderLists[$key]['dateAdd'] = date('Y-m-d H:i:s', strtotime($order->created_at));
             $orderLists[$key]['dateClose'] = $order->created_at;
             $orderLists[$key]['goodsNumber'] = $order->orderItems_count;
             $orderLists[$key]['hasRefund'] = $order->hasRefund;
@@ -129,6 +129,8 @@ class OrderController extends Controller
                 $goodsMap[$order->id][$key]['userId'] = $item->user_id;
             }
         }
+
+        dd($orderLists);
 
         return [
             'code' => 0,
