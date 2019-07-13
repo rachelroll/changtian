@@ -7,6 +7,7 @@ use App\ChinaArea;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Address as AddressResource;
+use Illuminate\Support\Facades\Log;
 
 class AddressController extends Controller
 {
@@ -35,7 +36,7 @@ class AddressController extends Controller
         $contact_name = $request->linkMan;
         $phone = $request->mobile;
         $code = $request->code;
-        $isDefault = $request->isDefalut;
+        $isDefault = $request->isDefault;
         $provinceStr = ChinaArea::where('code', substr($provinceId,0,6))->first()->name;
         $areaStr = ChinaArea::where('code', substr($cityId,0,6))->first()->name;
         $cityStr = ChinaArea::where('code', substr($districtId,0,6))->first()->name;
@@ -73,14 +74,14 @@ class AddressController extends Controller
         $id = $request->id;
         $isDefault = $request->isDefault;
 
-        if ($isDefault == 1) {
-            Address::where('isDefault', 1)->update([
-                'isDefault' => 0
+        if ($isDefault == '1') {
+            Address::where('isDefault', '1')->update([
+                'isDefault' => '0'
             ]);
             $bool = Address::where('id', $id)->update([
                 'isDefault' => $isDefault,
             ]);
-        } elseif($isDefault == 0) {
+        } elseif($isDefault == '0') {
             $provinceId = $request->provinceId;
             $cityId = $request->cityId;
             $districtId = $request->districtId;
