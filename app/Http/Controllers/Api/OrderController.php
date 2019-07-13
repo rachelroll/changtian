@@ -105,7 +105,7 @@ class OrderController extends Controller
 
         foreach ($orders as $key => $order) {
             $orderLists[$key]['amount'] = $order->amount;
-            $orderLists[$key]['dateAdd'] = $order->created_at;
+            $orderLists[$key]['dateAdd'] = date('Y-m-d H:i:s', $order->created_at);
             $orderLists[$key]['dateClose'] = $order->created_at;
             $orderLists[$key]['goodsNumber'] = $order->orderItems_count;
             $orderLists[$key]['hasRefund'] = $order->hasRefund;
