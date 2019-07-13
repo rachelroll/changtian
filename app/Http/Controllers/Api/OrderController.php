@@ -130,7 +130,6 @@ class OrderController extends Controller
             }
         }
 
-        dd($orderLists);
 
         return [
             'code' => 0,
