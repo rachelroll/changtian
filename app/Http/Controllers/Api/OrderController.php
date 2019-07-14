@@ -281,7 +281,7 @@ class OrderController extends Controller
         $order_id = $request->orderId;
 
         $bool = Order::where('id', $order_id)->update([
-            'status' => -1
+            'status' => 5
         ]);
 
         if ($bool) {
