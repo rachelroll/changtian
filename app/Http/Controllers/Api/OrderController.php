@@ -62,7 +62,7 @@ class OrderController extends Controller
                 'cover' => $pictures[0]
             ]);
 
-            $amount += $good_id * $quantity;
+            $amount += $good_info->price * $quantity;
         }
 
         Order::where('id', $order_id)->update([
@@ -129,7 +129,6 @@ class OrderController extends Controller
                 $goodsMap[$order->id][$key]['userId'] = $item->user_id;
             }
         }
-
 
         return [
             'code' => 0,
