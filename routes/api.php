@@ -38,6 +38,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('order/detail', 'OrderController@detail');
     // 确认收货
     Route::post('order/delivery', 'OrderController@delivery');
+    // 关闭订单
+    Route::post('order/close', 'OrderController@close');
 
     // banner
     Route::get('/banner/list', 'BannerController@index');

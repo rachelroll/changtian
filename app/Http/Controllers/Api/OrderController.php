@@ -271,4 +271,29 @@ class OrderController extends Controller
             return $user_id;
         }
     }
+    
+    // 关闭订单
+    public function close(Request $request)
+    {
+        $token = $request->token;
+        $user_id = $this->checkTocken($token);
+
+        $order_id = $request->orderId;
+
+        $bool = Order::where('order_id', $order_id)->update([
+            'status' => -1
+        ]);
+
+        if ($bool) {
+            return [
+                'code' => 0,
+                'msg' => 'success'
+            ];
+        } else {
+            return [
+                'code' => 202,
+                'msg' => '请稍后重试'
+            ];
+        }
+    }
 }
