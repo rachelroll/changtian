@@ -14,6 +14,9 @@ class Banner extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'picUrl' => config('filesystems.disks.oss.cdnDomain') . '/' . $this->picUrl,
+            'businessId' => $this->id
+        ];
     }
 }
