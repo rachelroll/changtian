@@ -56,7 +56,9 @@ class GoodsController extends Controller
 
         return [
             'code' => 0,
-            'data' => $fdMp4,
+            'data' => [
+                'fdMp4' => $fdMp4
+            ],
             'msg'  => 'success',
         ];
     }
