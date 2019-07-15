@@ -15,7 +15,7 @@ class AddressController extends Controller
     // 地址列表
     public function index()
     {
-        $addresses = Address::all();
+        $addresses = Address::where('user_id',request()->user()->id)->all();
         if ($addresses) {
             return AddressResource::collection($addresses);
         } else {
@@ -53,6 +53,7 @@ class AddressController extends Controller
             'provinceStr'  => $provinceStr,
             'areaStr'      => $areaStr,
             'cityStr'      => $cityStr,
+            'user_id'      => $request->user()->id,
         ]);
 
         if ($bool) {
@@ -127,7 +128,7 @@ class AddressController extends Controller
     // 获取默认收货地址
     public function default()
     {
-        $address = Address::where('isDefault', 1)->first();
+        $address = Address::where('isDefault', 1)->where('user_id',request()->user()->id)->first();
 
         if ($address) {
             return new AddressResource($address);
@@ -142,8 +143,9 @@ class AddressController extends Controller
     // 地址详情
     public function detail(Request $request)
     {
+
         $id = $request->id;
-        $address = Address::where('id', $id)->first();
+        $address = Address::where('id', $id)->where('user_id',$request->user()->id)->first();
 
         return new AddressResource($address);
     }

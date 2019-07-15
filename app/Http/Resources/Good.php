@@ -32,7 +32,7 @@ class Good extends JsonResource
                     'videoId' => $this->videoId // 视频 ID
                 ],
                 'category' => [
-                    'name' => '水果'
+                    'name' => $this->category->name
                 ],
             ],
             'msg' => 'success'
