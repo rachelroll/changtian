@@ -7,6 +7,7 @@ use App\ChinaArea;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Address as AddressResource;
+use Illuminate\Support\Facades\Log;
 
 class AddressController extends Controller
 {
@@ -35,7 +36,7 @@ class AddressController extends Controller
         $contact_name = $request->linkMan;
         $phone = $request->mobile;
         $code = $request->code;
-        $isDefault = $request->isDefalut;
+        $isDefault = $request->isDefault;
         $provinceStr = ChinaArea::where('code', substr($provinceId,0,6))->first()->name;
         $areaStr = ChinaArea::where('code', substr($cityId,0,6))->first()->name;
         $cityStr = ChinaArea::where('code', substr($districtId,0,6))->first()->name;
@@ -71,19 +72,29 @@ class AddressController extends Controller
     public function update(Request $request)
     {
         $id = $request->id;
-        $provinceId = $request->provinceId;
-        $cityId = $request->cityId;
-        $districtId = $request->districtId;
-        $address = $request->address;
-        $contact_name = $request->linkMan;
-        $phone = $request->mobile;
-        $code = $request->code;
+        $isDefault = $request->isDefault;
 
-        $provinceStr = ChinaArea::where('code', substr($provinceId,0,6))->first()->name;
-        $areaStr = ChinaArea::where('code', substr($cityId,0,6))->first()->name;
-        $cityStr = ChinaArea::where('code', substr($districtId,0,6))->first()->name;
+        if ($isDefault == '1') {
+            Address::where('isDefault', '1')->update([
+                'isDefault' => '0'
+            ]);
+            $bool = Address::where('id', $id)->update([
+                'isDefault' => $isDefault,
+            ]);
+        } elseif($isDefault == '0') {
+            $provinceId = $request->provinceId;
+            $cityId = $request->cityId;
+            $districtId = $request->districtId;
+            $address = $request->address;
+            $contact_name = $request->linkMan;
+            $phone = $request->mobile;
+            $code = $request->code;
 
-        $bool = Address::where('id', $id)->update([
+            $provinceStr = ChinaArea::where('code', substr($provinceId,0,6))->first()->name;
+            $areaStr = ChinaArea::where('code', substr($cityId,0,6))->first()->name;
+            $cityStr = ChinaArea::where('code', substr($districtId,0,6))->first()->name;
+
+            $bool = Address::where('id', $id)->update([
                 'provinceId'   => $provinceId,
                 'cityId'       => $cityId,
                 'districtId'   => $districtId,
@@ -91,11 +102,14 @@ class AddressController extends Controller
                 'contact_name' => $contact_name,
                 'phone'        => $phone,
                 'code'         => $code,
-                'isDefault'    => '',
                 'provinceStr'  => $provinceStr,
                 'areaStr'      => $areaStr,
                 'cityStr'      => $cityStr,
+                'isDefault' => $isDefault,
             ]);
+        }
+
+
 
         if ($bool) {
             return [
@@ -113,7 +127,7 @@ class AddressController extends Controller
     // 获取默认收货地址
     public function default()
     {
-        $address = Address::where('isDefault', 'true')->first();
+        $address = Address::where('isDefault', 1)->first();
 
         if ($address) {
             return new AddressResource($address);

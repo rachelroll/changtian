@@ -34,12 +34,22 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('/order/list', 'OrderController@list');
     // 订单状态
     Route::get('/order/statistics', 'OrderController@statistics');
+    // 订单详情
+    Route::get('order/detail', 'OrderController@detail');
+    // 确认收货
+    Route::post('order/delivery', 'OrderController@delivery');
+    // 关闭订单
+    Route::post('order/close', 'OrderController@close');
 
     // banner
     Route::get('/banner/list', 'BannerController@index');
 
     // 用户相关
+    // 登录
     Route::post('/user/wxapp/login', 'UserController@login');
+    // 用户信息
+    Route::get('user/detail', 'UserController@detail');
+
 
     // 获取默认地址
     Route::get('/user/shipping-address/default', 'AddressController@default');

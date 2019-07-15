@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\ChinaArea;
 use App\Good;
 use App\Http\Controllers\Controller;
 use App\Order;
@@ -13,20 +14,12 @@ use App\Http\Resources\OrderItem as OrderItemResource;
 
 class OrderController extends Controller
 {
+    // 创建订单
     public function create(Request $request)
     {
         $token = $request->token;
 
-        $user_id = Redis::get($token);
-        if (!$user_id) {
-            return [
-                'original_token' => $request->token,
-                'token' => $token,
-                'user_id' => $user_id,
-                'code' => 202,
-                'msg' => '请登录'
-            ];
-        }
+        $user_id = $this->checkTocken($token);
 
         $goods_infos = $request->goodsJsonStr;
 
@@ -69,7 +62,7 @@ class OrderController extends Controller
                 'cover' => $pictures[0]
             ]);
 
-            $amount += $good_id * $quantity;
+            $amount += $good_info->price * $quantity;
         }
 
         Order::where('id', $order_id)->update([
@@ -86,7 +79,7 @@ class OrderController extends Controller
     {
         $token = $request->token;
 
-        $user_id = Redis::get($token);
+        $user_id = $this->checkTocken($token);
 
         $orders = OrderItem::where('user_id', $user_id)->get();
 
@@ -97,45 +90,22 @@ class OrderController extends Controller
         return OrderItemResource::collection($orders);
     }
 
+    // 订单列表
     public function list(Request $request)
     {
         $token = $request->token;
-        $user_id = Redis::get($token);
-        if (!$user_id) {
-            return [
-                'code' => 202,
-                'msg' => '请登录'
-            ];
-        }
+        $user_id = $this->checkTocken($token);
 
         $status = $request->status;
 
-        $orders = Order::withCount('orderItem')->where('user_id', $user_id)->where('status', $status)->get();
+        $orders = Order::withCount('orderItems')->where('user_id', $user_id)->where('status', $status)->orderBy('created_at', 'DESC')->get();
 
         $orderLists = [];
         $goodsMap = [];
 
         foreach ($orders as $key => $order) {
-            switch($order->status){
-                case 0:
-                    $statusStr = '待支付';
-                    break;
-                case 1:
-                    $statusStr = '待发货';
-                    break;
-                case 2:
-                    $statusStr = '待收货';
-                    break;
-                case 3:
-                    $statusStr = '待评价';
-                    break;
-                case 4:
-                    $statusStr = '已完成';
-                    break;
-            }
-
             $orderLists[$key]['amount'] = $order->amount;
-            $orderLists[$key]['dateAdd'] = $order->created_at;
+            $orderLists[$key]['dateAdd'] = date('Y-m-d H:i:s', strtotime($order->created_at));
             $orderLists[$key]['dateClose'] = $order->created_at;
             $orderLists[$key]['goodsNumber'] = $order->orderItems_count;
             $orderLists[$key]['hasRefund'] = $order->hasRefund;
@@ -144,7 +114,7 @@ class OrderController extends Controller
             $orderLists[$key]['orderNumber'] = $order->order_sn;
             $orderLists[$key]['remark'] = $order->remark;
             $orderLists[$key]['status'] = $order->status;
-            $orderLists[$key]['statusStr'] = $statusStr;
+            $orderLists[$key]['statusStr'] = Order::STATUS[$order->status];
             $orderLists[$key]['userId'] = $user_id;
 
             $orderItems = OrderItem::where('order_id', $order->id)->get();
@@ -170,16 +140,11 @@ class OrderController extends Controller
         ];
     }
 
+    // 订单状态
     public function statistics(Request $request)
     {
         $token = $request->token;
-        $user_id = Redis::get($token);
-        if (!$user_id) {
-            return [
-                'code' => 202,
-                'msg' => '请登录'
-            ];
-        }
+        $user_id = $this->checkTocken($token);
 
         $arr = [0, 0, 0, 0, 0, 0];
         $orders = Order::where('user_id', $user_id)->get();
@@ -199,5 +164,136 @@ class OrderController extends Controller
             ],
             'msg' => 'success',
         ];
+    }
+
+    // 订单详情
+    public function detail(Request $request)
+    {
+        $token = $request->token;
+        $user_id = $this->checkTocken($token);
+
+        $order_id = $request->id;
+
+        $order = Order::withCount('orderItems')->where('id', $order_id)->first();
+
+        $orderInfo = [];
+
+        $orderInfo['amount'] = $order->amount;
+        $orderInfo['dateAdd'] = date('Y-m-d H:i:s', strtotime($order->created_at));
+        $orderInfo['dateClose'] = date('Y-m-d H:i:s', strtotime($order->created_at) + 1800);
+        $orderInfo['goodsNumber'] = $order->order_items_count;
+        $orderInfo['hasRefund'] = $order->hasRefund;
+        $orderInfo['isPay'] = $order->isPay;
+        $orderInfo['orderNumber'] = $order->order_sn;
+        $orderInfo['remark'] = $order->remark;
+        $orderInfo['status'] = $order->status;
+        $orderInfo['statusStr'] = Order::STATUS[$order->status];
+        $orderInfo['amount'] = $order->amount;
+        $orderInfo['userId'] = $order->user_id;
+
+        $provinceStr = ChinaArea::where('code', substr($order->provinceId,0,6))->first()->name;
+        $cityStr = ChinaArea::where('code', substr($order->cityId,0,6))->first()->name;
+        $districtStr = ChinaArea::where('code', substr($order->districtId,0,6))->first()->name;
+
+        if ($order->trackingNumber) {
+            $logistics = [
+                'express_name' => $order->express_name,
+                'express_number' => $order->express_number,
+                'linkMan' => $order->username,
+                'mobile' => $order->contact,
+                'address' => $order->address,
+                'provinceStr' => $provinceStr,
+                'cityStr' => $cityStr,
+                'areaStr' => $districtStr,
+            ];
+        } else {
+            $logistics = false;
+        }
+
+
+        $order_items = $order->orderItems;
+
+        if ($order_items) {
+            $goods = [];
+            foreach ($order_items as $key => $order_item) {
+                $goods[$key]['amount'] = $order_item->price;
+                $goods[$key]['goodsId'] = $order_item->good_id;
+                $goods[$key]['goodsName'] = $order_item->name;
+                $goods[$key]['id'] = $order_item->id;
+                $goods[$key]['number'] = $order_item->quantity;
+                $goods[$key]['orderId'] = $order_item->order_id;
+                $goods[$key]['pic'] = config('filesystems.disks.oss.cdnDomain') . '/' . $order_item->cover;
+                $goods[$key]['userId'] = $order_item->user_id;
+            }
+        }
+
+        return [
+            'code' => 0,
+            'data' => [
+                'orderInfo' => $orderInfo,
+                'goods' => $goods,
+                'logistics' => $logistics
+            ],
+            'msg' => 'success'
+        ];
+    }
+
+    // 确认收货
+    public function delivery(Request $request)
+    {
+        $token = $request->token;
+        $user_id = $this->checkTocken($token);
+
+        $order_id = $request->orderId;
+
+        $bool = Order::where('id', $order_id)->update([
+            'status' => 3
+        ]);
+
+        if ($bool) {
+            return [
+                'code' => 0,
+                'msg' => 'success'
+            ];
+        }
+    }
+
+    // 检查 token
+    private function checkTocken($token)
+    {
+        $user_id = Redis::get($token);
+        if (!$user_id) {
+            return [
+                'code' => 202,
+                'msg' => '请登录'
+            ];
+        } else {
+            return $user_id;
+        }
+    }
+    
+    // 关闭订单
+    public function close(Request $request)
+    {
+        $token = $request->token;
+        $user_id = $this->checkTocken($token);
+
+        $order_id = $request->orderId;
+
+        $bool = Order::where('id', $order_id)->update([
+            'status' => 5
+        ]);
+
+        if ($bool) {
+            return [
+                'code' => 0,
+                'msg' => 'success'
+            ];
+        } else {
+            return [
+                'code' => 202,
+                'msg' => '请稍后重试'
+            ];
+        }
     }
 }

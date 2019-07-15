@@ -8,11 +8,18 @@ class Order extends Model
 {
     protected $guarded = [];
 
-    public function orderItem()
+    const STATUS = ['待支付', '待发货', '待收货', '已完成'];
+
+    public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }
 }
+
+
+
+
+
 
 
 
