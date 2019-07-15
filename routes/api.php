@@ -62,8 +62,9 @@ Route::group(['namespace' => 'Api'], function () {
         Route::post('/user/shipping-address/add', 'AddressController@add');
         // 更新收货地址
         Route::post('/user/shipping-address/update', 'AddressController@update');
-        
+
         Route::get('/user/shipping-address/detail', 'AddressController@detail');
+        Route::post('/user/shipping-address/delete', 'AddressController@delete');
     });
 
 

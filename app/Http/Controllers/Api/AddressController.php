@@ -149,4 +149,18 @@ class AddressController extends Controller
 
         return new AddressResource($address);
     }
+
+    // 地址详情
+    public function delete(Request $request)
+    {
+
+        $id = $request->id;
+        $res = Address::where('id', $id)->where('user_id',$request->user()->id)->delete();
+
+        return response()->json([
+            'code'=>200,
+            'msg'=>'删除成功',
+        ]);
+
+    }
 }
