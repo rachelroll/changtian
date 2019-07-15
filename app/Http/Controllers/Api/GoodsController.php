@@ -46,11 +46,17 @@ class GoodsController extends Controller
     {
         $video_id = $request->videoId;
 
-        $fdMp4 = Video::find($video_id);
+        $video = Video::find($video_id);
+
+        if ($video) {
+            $videoMp4Src = $video->fdMp4;
+        } else {
+            $videoMp4Src = null;
+        }
 
         return [
             'code' => 0,
-            'data' => $fdMp4,
+            'data' => $videoMp4Src,
             'msg'  => 'success',
         ];
     }
