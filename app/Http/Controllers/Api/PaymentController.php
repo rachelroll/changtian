@@ -44,7 +44,7 @@ class PaymentController extends Controller
         $openid = optional(User::where('id', $user_id)->first())->openid;
         $id = $request->id;
         // 根据订单 id 查出价格
-        $order_price = optional(Order::where('id', $id)->first())->pirce;
+        $order_price = optional(Order::where('id', $id)->first())->amount * 100;
         $order_sn = optional(Order::where('id', $id)->first())->order_sn;
 
         // 创建 Paylog 记录
