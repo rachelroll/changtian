@@ -49,14 +49,14 @@ class GoodsController extends Controller
         $video = Video::find($video_id);
 
         if ($video) {
-            $videoMp4Src = config('filesystems.disks.oss.cdnDomain') . '/' .$video->fdMp4;
+            $fdMp4 = config('filesystems.disks.oss.cdnDomain') . '/' .$video->fdMp4;
         } else {
-            $videoMp4Src = null;
+            $fdMp4 = null;
         }
 
         return [
             'code' => 0,
-            'data' => $videoMp4Src,
+            'data' => $fdMp4,
             'msg'  => 'success',
         ];
     }
