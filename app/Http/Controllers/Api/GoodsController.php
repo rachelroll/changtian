@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Good;
+use App\Video;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Good as GoodResource;
@@ -38,5 +39,19 @@ class GoodsController extends Controller
         }
 
         return GoodResource::collection($goods);
+    }
+
+    // 视频
+    public function mediaVideoDetail(Request $request)
+    {
+        $video_id = $request->videoId;
+
+        $fdMp4 = Video::find($video_id);
+
+        return [
+            'code' => 0,
+            'data' => $fdMp4,
+            'msg'  => 'success',
+        ];
     }
 }

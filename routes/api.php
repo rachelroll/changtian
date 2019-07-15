@@ -25,6 +25,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('/shop/goods/list', 'GoodsController@index');
     // 产品分类
     Route::get('/shop/goods/category/all', 'CategoryController@index');
+    // 视频
+    Route::get('/media/video/detail', 'GoodsController@mediaVideoDetail');
 
     // 创建订单
     Route::post('/order/create', 'OrderController@create');

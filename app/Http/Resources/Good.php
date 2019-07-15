@@ -29,6 +29,7 @@ class Good extends JsonResource
                     'content' => $this->intro, // 商品简介
                     'stores' => 100,
                     'size' => $this->size, // 规格与包装
+                    'videoId' => $this->videoId // 视频 ID
                 ],
                 'category' => [
                     'name' => '水果'
