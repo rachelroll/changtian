@@ -30,7 +30,7 @@ class PaymentController extends Controller
     }
 
     // 向微信请求统一下单接口, 创建预支付订单
-    public function place_order(Request $request)
+    public function placeOrder(Request $request)
     {
         $token = $request->token;
         $user_id = Redis::get($token);
@@ -91,9 +91,10 @@ class PaymentController extends Controller
     // 接收微信支付状态的通知
     public function notify()
     {
-        $data = file_get_contents("php://input");
-        Log::info('收到微信通知-开始'.$data);
 
+        // get the raw POST data
+        $rawData = file_get_contents("php://input");
+        info('notify_data:' . $rawData);
         $app = $this->payment();
 
         // 用 easywechat 封装的方法接收微信的信息, 根据 $message 的内容进行处理, 之后要告知微信服务器处理好了, 否则微信会一直请求这个 url, 发送信息
@@ -104,7 +105,6 @@ class PaymentController extends Controller
                 return true; // 如果已经生成订单, 表示已经处理完了, 告诉微信不用再通知了
             }
 
-            Log::info('收到微信通知');
             // 查看支付日志
             $payLog = PayLog::where('out_trade_no', $message['out_trade_no'])->first();
             if (!$payLog || $payLog->paid_at) { // 如果订单不存在 或者 订单已经支付过了
@@ -120,7 +120,6 @@ class PaymentController extends Controller
 
                     // 更新订单
                     Order::where('id', $order->id)->update([
-                        'order_sn' => $message['out_trade_no'],
                         'amount' => $message['total_fee'],
                         'pay_log_id' => $payLog->id,
                         'status' => 1,
