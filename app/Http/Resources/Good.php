@@ -32,7 +32,7 @@ class Good extends JsonResource
                     'size' => $this->size, // 规格与包装
                     'is_source' => $this->is_source, // 是否溯源
                     'source_content' => $this->source_content, // 是否溯源
-                    'source_video' => config('filesystems.disks.oss.cdnDomain') . '/' . $this->source_video, // 是否溯源
+                    'source_video' => $this->source_video ? config('filesystems.disks.oss.cdnDomain') . '/' . $this->source_video : null, // 是否溯源
                     'videoId' => $this->videoId // 视频 ID
                 ],
                 'category' => [
