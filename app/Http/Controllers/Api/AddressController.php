@@ -15,7 +15,7 @@ class AddressController extends Controller
     // 地址列表
     public function index()
     {
-        $addresses = Address::where('user_id',request()->user()->id)->all();
+        $addresses = Address::where('user_id',request()->user()->id)->get();
         if ($addresses) {
             return AddressResource::collection($addresses);
         } else {

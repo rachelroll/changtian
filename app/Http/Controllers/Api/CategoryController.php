@@ -9,9 +9,8 @@ use App\Http\Resources\Category as CategoryResource;
 
 class CategoryController extends Controller
 {
-    // 所有分类
     public function index()
     {
-        return CategoryResource::collection(Category::all());
+        return CategoryResource::collection(Category::where('enabled',1)->get());
     }
 }
