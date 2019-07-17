@@ -32,6 +32,8 @@ class GoodsController extends Controller
         $goodsModel = Good::where('enabled',1);
         if($request->id) {
             $goods = $goodsModel->where('category_id', $request->id)->get();
+        } elseif($request->nameLike) {
+            $goods = $goodsModel->where('name', 'like', '%'.$request->nameLike.'%')->get();
         } else {
             $goods = $goodsModel->get();
         }

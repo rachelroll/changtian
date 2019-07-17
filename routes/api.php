@@ -62,7 +62,7 @@ Route::group(['namespace' => 'Api'], function () {
         Route::post('/user/shipping-address/add', 'AddressController@add');
         // 更新收货地址
         Route::post('/user/shipping-address/update', 'AddressController@update');
-
+        // 获取地址详细信息
         Route::get('/user/shipping-address/detail', 'AddressController@detail');
         Route::post('/user/shipping-address/delete', 'AddressController@delete');
     });
@@ -70,8 +70,6 @@ Route::group(['namespace' => 'Api'], function () {
 
     // 获取省份信息
     Route::get('/common/region/v2/province', 'AddressController@province');
-    // 获取地址详细信息
-
 
 
     // 请求微信统一下单接口
