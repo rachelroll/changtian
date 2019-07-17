@@ -15,7 +15,7 @@ class BannerController extends Controller
     {
         $slogan = DB::table('admin_users')->pluck('slogan')->first();
 
-        $banners = Banner::all();
+        $banners = Banner::where('enabled',1)->get();
 
         foreach ($banners as &$item) {
             $item->picUrl = config('filesystems.disks.oss.cdnDomain') . '/' . $item->picUrl;

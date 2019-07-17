@@ -120,7 +120,7 @@ class PaymentController extends Controller
 
                     // 更新订单
                     Order::where('id', $order->id)->update([
-                        'amount' => $message['total_fee'],
+                        'amount' => $message['total_fee'] / 100,
                         'pay_log_id' => $payLog->id,
                         'status' => 1,
                         'paid_at' => $payLog->paid_at,

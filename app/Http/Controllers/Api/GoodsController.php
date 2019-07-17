@@ -29,10 +29,11 @@ class GoodsController extends Controller
     // 商品列表
     public function index(Request $request)
     {
+        $goodsModel = Good::where('enabled',1);
         if($request->id) {
-            $goods = Good::where('category_id', $request->id)->get();
+            $goods = $goodsModel->where('category_id', $request->id)->get();
         } else {
-            $goods = Good::all();
+            $goods = $goodsModel->get();
         }
         foreach ($goods as &$good) {
             $good->cover = config('filesystems.disks.oss.cdnDomain') . '/' . $good->pictures[0];
