@@ -24,7 +24,7 @@ class BannerController extends Controller
         return [
             'code' => 0,
             'data' => $banners,
-            'slogan' => $slogan
+            'slogan' => config('filesystems.disks.oss.cdnDomain') . '/' . $slogan
         ];
     }
 }
