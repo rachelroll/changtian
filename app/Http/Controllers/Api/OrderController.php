@@ -195,7 +195,7 @@ class OrderController extends Controller
         $cityStr = ChinaArea::where('code', substr($order->cityId,0,6))->first()->name;
         $districtStr = ChinaArea::where('code', substr($order->districtId,0,6))->first()->name;
 
-        if ($order->trackingNumber) {
+        if ($order->express_number) {
             $logistics = [
                 'express_name' => $order->express_name,
                 'express_number' => $order->express_number,

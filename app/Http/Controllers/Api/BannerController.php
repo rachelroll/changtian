@@ -13,7 +13,8 @@ class BannerController extends Controller
 
     public function index()
     {
-        $slogan = DB::table('admin_users')->pluck('slogan')->first();
+        $slogan = DB::table('admin_users')->select('slogan','slogan_color')->first();
+
 
         $banners = Banner::where('enabled',1)->get();
 
