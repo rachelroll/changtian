@@ -14,6 +14,7 @@ use App\Http\Resources\OrderItem as OrderItemResource;
 
 class OrderController extends Controller
 {
+
     // 创建订单
     public function create(Request $request)
     {
@@ -29,21 +30,19 @@ class OrderController extends Controller
         $comments = $request->comments ? $request->comments : '';
         //订单编号
         $order_sn = date('YmdHis') . (time() + $user_id);
-        $order_id = DB::table('orders')->insertGetId(
-            [
-                'username' => $request->linkMan,
-                'contact' => $request->mobile,
-                'address' => $request->address,
-                'provinceId' => $request->provinceId,
-                'cityId' => $request->cityId,
-                'districtId' => $request->districtId,
-                'comments' => $comments,
-                'order_sn' => $order_sn,
-                'user_id' => $user_id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        $order_id = DB::table('orders')->insertGetId([
+            'username'   => $request->linkMan,
+            'contact'    => $request->mobile,
+            'address'    => $request->address,
+            'provinceId' => $request->provinceId,
+            'cityId'     => $request->cityId,
+            'districtId' => $request->districtId,
+            'comments'   => $comments,
+            'order_sn'   => $order_sn,
+            'user_id'    => $user_id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         foreach (json_decode($goods_infos) as $goods_info) {
             $good_id = $goods_info->goodsId;
@@ -54,24 +53,24 @@ class OrderController extends Controller
 
             OrderItem::create([
                 'order_id' => $order_id,
-                'good_id' => $good_id,
+                'good_id'  => $good_id,
                 'quantity' => $quantity,
-                'price' => $good_info->price,
-                'name' => $good_info->name,
-                'user_id' => $user_id,
-                'cover' => $pictures[0]
+                'price'    => $good_info->price,
+                'name'     => $good_info->name,
+                'user_id'  => $user_id,
+                'cover'    => $pictures[0],
             ]);
 
             $amount += $good_info->price * $quantity;
         }
 
         Order::where('id', $order_id)->update([
-            'amount' => $amount
+            'amount' => $amount,
         ]);
 
         return [
             'code' => 0,
-            'msg' => '请等待工作人员与您联系'
+            'msg'  => '请等待工作人员与您联系',
         ];
     }
 
@@ -98,35 +97,39 @@ class OrderController extends Controller
 
         $status = $request->status;
 
-        $orders = Order::withCount('orderItems')->where('user_id', $user_id)->where('status', $status)->orderBy('created_at', 'DESC')->get();
+        $orders = Order::withCount('orderItems')
+            ->where('user_id', $user_id)
+            ->where('status', $status)
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         $orderLists = [];
         $goodsMap = [];
 
         foreach ($orders as $key => $order) {
-            $orderLists[$key]['amount'] = $order->amount;
-            $orderLists[$key]['dateAdd'] = date('Y-m-d H:i:s', strtotime($order->created_at));
-            $orderLists[$key]['dateClose'] = $order->created_at;
-            $orderLists[$key]['goodsNumber'] = $order->orderItems_count;
-            $orderLists[$key]['hasRefund'] = $order->hasRefund;
-            $orderLists[$key]['id'] = $order->id;
-            $orderLists[$key]['isPay'] = $order->isPay;
-            $orderLists[$key]['orderNumber'] = $order->order_sn;
-            $orderLists[$key]['remark'] = $order->remark;
-            $orderLists[$key]['status'] = $order->status;
-            $orderLists[$key]['statusStr'] = Order::STATUS[$order->status];
-            $orderLists[$key]['userId'] = $user_id;
+            $orderLists[ $key ]['amount'] = $order->amount;
+            $orderLists[ $key ]['dateAdd'] = date('Y-m-d H:i:s', strtotime($order->created_at));
+            $orderLists[ $key ]['dateClose'] = $order->created_at;
+            $orderLists[ $key ]['goodsNumber'] = $order->orderItems_count;
+            $orderLists[ $key ]['hasRefund'] = $order->hasRefund;
+            $orderLists[ $key ]['id'] = $order->id;
+            $orderLists[ $key ]['isPay'] = $order->isPay;
+            $orderLists[ $key ]['orderNumber'] = $order->order_sn;
+            $orderLists[ $key ]['remark'] = $order->remark;
+            $orderLists[ $key ]['status'] = $order->status;
+            $orderLists[ $key ]['statusStr'] = Order::STATUS[ $order->status ];
+            $orderLists[ $key ]['userId'] = $user_id;
 
             $orderItems = OrderItem::where('order_id', $order->id)->get();
             foreach ($orderItems as $key => $item) {
-                $goodsMap[$order->id][$key]['amount'] = $order->amount;
-                $goodsMap[$order->id][$key]['goodsId'] = $item->good_id;
-                $goodsMap[$order->id][$key]['goodsName'] = $item->name;
-                $goodsMap[$order->id][$key]['id'] = $item->id;
-                $goodsMap[$order->id][$key]['number'] = $item->quantity;
-                $goodsMap[$order->id][$key]['orderId'] = $item->order_id;
-                $goodsMap[$order->id][$key]['pic'] = config('filesystems.disks.oss.cdnDomain') . '/' . $item->cover;
-                $goodsMap[$order->id][$key]['userId'] = $item->user_id;
+                $goodsMap[ $order->id ][ $key ]['amount'] = $order->amount;
+                $goodsMap[ $order->id ][ $key ]['goodsId'] = $item->good_id;
+                $goodsMap[ $order->id ][ $key ]['goodsName'] = $item->name;
+                $goodsMap[ $order->id ][ $key ]['id'] = $item->id;
+                $goodsMap[ $order->id ][ $key ]['number'] = $item->quantity;
+                $goodsMap[ $order->id ][ $key ]['orderId'] = $item->order_id;
+                $goodsMap[ $order->id ][ $key ]['pic'] = config('filesystems.disks.oss.cdnDomain') . '/' . $item->cover;
+                $goodsMap[ $order->id ][ $key ]['userId'] = $item->user_id;
             }
         }
 
@@ -134,9 +137,9 @@ class OrderController extends Controller
             'code' => 0,
             'data' => [
                 'orderList' => $orderLists,
-                'goodsMap' => $goodsMap,
+                'goodsMap'  => $goodsMap,
             ],
-            'msg' => 'success',
+            'msg'  => 'success',
         ];
     }
 
@@ -149,20 +152,20 @@ class OrderController extends Controller
         $arr = [0, 0, 0, 0, 0, 0];
         $orders = Order::where('user_id', $user_id)->get();
         foreach ($orders as $order) {
-            $arr[$order->status] += 1;
+            $arr[ $order->status ] += 1;
         }
 
         return [
             'code' => 0,
             'data' => [
-                "count_id_no_reputation"=> $arr[3],
-                "count_id_no_transfer" => $arr[1],
-                "count_id_close" => $arr[5],
-                "count_id_no_pay" => $arr[0],
-                "count_id_no_confirm" => $arr[2],
-                "count_id_success" => $arr[4]
+                "count_id_no_reputation" => $arr[3],
+                "count_id_no_transfer"   => $arr[1],
+                "count_id_close"         => $arr[5],
+                "count_id_no_pay"        => $arr[0],
+                "count_id_no_confirm"    => $arr[2],
+                "count_id_success"       => $arr[4],
             ],
-            'msg' => 'success',
+            'msg'  => 'success',
         ];
     }
 
@@ -187,43 +190,45 @@ class OrderController extends Controller
         $orderInfo['orderNumber'] = $order->order_sn;
         $orderInfo['remark'] = $order->remark;
         $orderInfo['status'] = $order->status;
-        $orderInfo['statusStr'] = Order::STATUS[$order->status];
+        $orderInfo['statusStr'] = Order::STATUS[ $order->status ];
         $orderInfo['amount'] = $order->amount;
         $orderInfo['userId'] = $order->user_id;
 
-        $provinceStr = ChinaArea::where('code', substr($order->provinceId,0,6))->first()->name;
-        $cityStr = ChinaArea::where('code', substr($order->cityId,0,6))->first()->name;
-        $districtStr = ChinaArea::where('code', substr($order->districtId,0,6))->first()->name;
+        $provinceStr = ChinaArea::where('code', substr($order->provinceId, 0, 6))->first()->name;
+        $cityStr = ChinaArea::where('code', substr($order->cityId, 0, 6))->first()->name;
+        $districtStr = ChinaArea::where('code', substr($order->districtId, 0, 6))->first()->name;
 
-        if ($order->express_number) {
+        if (in_array($order->status, [
+            Order::STATUS_CONFIRM,
+            Order::STATUS_SHIPPED,
+        ],TRUE)) {
             $logistics = [
-                'express_name' => $order->express_name,
+                'express_name'   => $order->express_name,
                 'express_number' => $order->express_number,
-                'linkMan' => $order->username,
-                'mobile' => $order->contact,
-                'address' => $order->address,
-                'provinceStr' => $provinceStr,
-                'cityStr' => $cityStr,
-                'areaStr' => $districtStr,
+                'linkMan'        => $order->username,
+                'mobile'         => $order->contact,
+                'address'        => $order->address,
+                'provinceStr'    => $provinceStr,
+                'cityStr'        => $cityStr,
+                'areaStr'        => $districtStr,
             ];
         } else {
-            $logistics = false;
+            $logistics = FALSE;
         }
-
 
         $order_items = $order->orderItems;
 
         if ($order_items) {
             $goods = [];
             foreach ($order_items as $key => $order_item) {
-                $goods[$key]['amount'] = $order_item->price;
-                $goods[$key]['goodsId'] = $order_item->good_id;
-                $goods[$key]['goodsName'] = $order_item->name;
-                $goods[$key]['id'] = $order_item->id;
-                $goods[$key]['number'] = $order_item->quantity;
-                $goods[$key]['orderId'] = $order_item->order_id;
-                $goods[$key]['pic'] = config('filesystems.disks.oss.cdnDomain') . '/' . $order_item->cover;
-                $goods[$key]['userId'] = $order_item->user_id;
+                $goods[ $key ]['amount'] = $order_item->price;
+                $goods[ $key ]['goodsId'] = $order_item->good_id;
+                $goods[ $key ]['goodsName'] = $order_item->name;
+                $goods[ $key ]['id'] = $order_item->id;
+                $goods[ $key ]['number'] = $order_item->quantity;
+                $goods[ $key ]['orderId'] = $order_item->order_id;
+                $goods[ $key ]['pic'] = config('filesystems.disks.oss.cdnDomain') . '/' . $order_item->cover;
+                $goods[ $key ]['userId'] = $order_item->user_id;
             }
         }
 
@@ -231,10 +236,10 @@ class OrderController extends Controller
             'code' => 0,
             'data' => [
                 'orderInfo' => $orderInfo,
-                'goods' => $goods,
-                'logistics' => $logistics
+                'goods'     => $goods,
+                'logistics' => $logistics,
             ],
-            'msg' => 'success'
+            'msg'  => 'success',
         ];
     }
 
@@ -247,13 +252,13 @@ class OrderController extends Controller
         $order_id = $request->orderId;
 
         $bool = Order::where('id', $order_id)->update([
-            'status' => 3
+            'status' => 3,
         ]);
 
         if ($bool) {
             return [
                 'code' => 0,
-                'msg' => 'success'
+                'msg'  => 'success',
             ];
         }
     }
@@ -265,13 +270,13 @@ class OrderController extends Controller
         if (!$user_id) {
             return [
                 'code' => 202,
-                'msg' => '请登录'
+                'msg'  => '请登录',
             ];
         } else {
             return $user_id;
         }
     }
-    
+
     // 关闭订单
     public function close(Request $request)
     {
@@ -281,18 +286,18 @@ class OrderController extends Controller
         $order_id = $request->orderId;
 
         $bool = Order::where('id', $order_id)->update([
-            'status' => 5
+            'status' => 5,
         ]);
 
         if ($bool) {
             return [
                 'code' => 0,
-                'msg' => 'success'
+                'msg'  => 'success',
             ];
         } else {
             return [
                 'code' => 202,
-                'msg' => '请稍后重试'
+                'msg'  => '请稍后重试',
             ];
         }
     }
