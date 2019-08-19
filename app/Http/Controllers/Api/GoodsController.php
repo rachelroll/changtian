@@ -29,7 +29,7 @@ class GoodsController extends Controller
     // 商品列表
     public function index(Request $request)
     {
-        $goodsModel = Good::where('enabled',1);
+        $goodsModel = Good::where('enabled',1)->orderBy('order','ASC');
         if($request->id) {
             $goods = $goodsModel->where('category_id', $request->id)->get();
         } elseif($request->nameLike) {

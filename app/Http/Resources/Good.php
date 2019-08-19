@@ -14,6 +14,7 @@ class Good extends JsonResource
      */
     public function toArray($request)
     {
+        $video_id = $this->video ? ($this->video->fdMp4 ?$this->videoId :null) : null;
         return [
             'code' => 0,
             'data' => [
@@ -33,7 +34,7 @@ class Good extends JsonResource
                     'is_source' => $this->is_source, // 是否溯源
                     'source_content' => $this->source_content, // 是否溯源
                     'source_video' => $this->source_video ? config('filesystems.disks.oss.cdnDomain') . '/' . $this->source_video : null, // 是否溯源
-                    'videoId' => $this->video->fbMp4 ?? $this->videoId, // 视频 ID
+                    'videoId' => $video_id, // 视频 ID
                 ],
                 'category' => [
                     'name' => $this->category->name
